@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,10 +32,9 @@ trait Helpers {
 	 *
 	 * @return string
 	 */
-	public static function base_dir( $path = '' ) {
+	public static function base_dir( string $path = '' ): string {
 
 		return rstore()->base_dir . $path;
-
 	}
 
 	/**
@@ -45,10 +46,8 @@ trait Helpers {
 	 *
 	 * @return string
 	 */
-	public static function assets_url( $path = '' ) {
+	public static function assets_url( string $path = '' ): string {
 
 		return rstore()->assets_url . $path;
-
 	}
-
 }

@@ -9,6 +9,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 if ( ! defined( 'ABSPATH' ) ) {
 
 	// @codeCoverageIgnoreStart
@@ -26,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @return string|null
  */
-function rstore_price( $post = null, $echo = false ) {
+function rstore_price( mixed $post = null, bool $echo = false ): ?string {
 
 	$post = get_post( $post );
 
@@ -34,7 +36,7 @@ function rstore_price( $post = null, $echo = false ) {
 
 	if ( 'domain' === $id ) {
 
-		return;
+		return null;
 
 	}
 
@@ -79,7 +81,6 @@ function rstore_price( $post = null, $echo = false ) {
 	}
 
 	return $output;
-
 }
 
 /**
@@ -90,12 +91,13 @@ function rstore_price( $post = null, $echo = false ) {
  * @param  int|WP_Post|null $post Product WP_Post instance.
  * @param  bool             $echo (optional) Echo the text.
  * @param  string           $button_label (optional) Text to display in the button.
+ * @param  bool             $button_new_tab (optional) Open button link in new tab.
  * @param  string           $text_cart (optional) Text to display in the cart link.
  * @param  bool             $redirect (optional) Redirect to cart after adding item.
  *
  * @return string|null
  */
-function rstore_add_to_cart_form( $post, $echo = false, $button_label = null, $button_new_tab = null, $text_cart = null, $redirect = true ) {
+function rstore_add_to_cart_form( mixed $post, bool $echo = false, ?string $button_label = null, ?bool $button_new_tab = null, ?string $text_cart = null, bool $redirect = true ): ?string {
 
 	$post = get_post( $post );
 
@@ -103,7 +105,7 @@ function rstore_add_to_cart_form( $post, $echo = false, $button_label = null, $b
 
 	if ( 'domain' === $id ) {
 
-		return;
+		return null;
 
 	}
 
@@ -176,7 +178,6 @@ function rstore_add_to_cart_form( $post, $echo = false, $button_label = null, $b
 	}
 
 	return $cart_form;
-
 }
 
 /**
@@ -190,7 +191,7 @@ function rstore_add_to_cart_form( $post, $echo = false, $button_label = null, $b
  *
  * @return string
  */
-function rstore_append_add_to_cart_form( $content ) {
+function rstore_append_add_to_cart_form( string $content ): string {
 
 	global $post;
 
@@ -216,7 +217,6 @@ function rstore_append_add_to_cart_form( $content ) {
 	}
 
 	return $content;
-
 }
 
 /**
@@ -229,13 +229,13 @@ function rstore_append_add_to_cart_form( $content ) {
  *
  * @return string|null
  */
-function rstore_add_to_cart_button( $cart_vars, $button_label ) {
+function rstore_add_to_cart_button( array $cart_vars, string $button_label ): ?string {
 
 	$cart_vars = apply_filters( 'rstore_cart_options', $cart_vars );
 
 	if ( ! is_array( $cart_vars ) ) {
 
-		return;
+		return null;
 
 	}
 
@@ -250,5 +250,4 @@ function rstore_add_to_cart_button( $cart_vars, $button_label ) {
 	$output .= '>' . esc_html( $button_label ) . '</button></div>';
 
 	return $output;
-
 }

@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +39,7 @@ final class Taxonomy_Category {
 	 *
 	 * @var string
 	 */
-	public static $default_permalink_base;
+	public static string $default_permalink_base;
 
 	/**
 	 * Class constructor.
@@ -49,7 +51,6 @@ final class Taxonomy_Category {
 		self::$default_permalink_base = sanitize_title( esc_html_x( 'product-category', 'slug name', 'reseller-store' ) );
 
 		add_action( 'init', array( $this, 'register' ) );
-
 	}
 
 	/**
@@ -59,13 +60,12 @@ final class Taxonomy_Category {
 	 *
 	 * @return string
 	 */
-	public static function permalink_base() {
+	public static function permalink_base(): string {
 
 		$permalinks     = (array) rstore_get_option( 'permalinks', array() );
 		$permalink_base = ! empty( $permalinks['category_base'] ) ? $permalinks['category_base'] : self::$default_permalink_base;
 
 		return sanitize_title( $permalink_base );
-
 	}
 
 	/**
@@ -74,7 +74,7 @@ final class Taxonomy_Category {
 	 * @action init
 	 * @since  0.2.0
 	 */
-	public function register() {
+	public function register(): void {
 
 		$labels = array(
 			'name'              => esc_html_x( 'Categories', 'taxonomy general name', 'reseller-store' ),
@@ -116,7 +116,5 @@ final class Taxonomy_Category {
 		$args = (array) apply_filters( 'rstore_product_category_args', $args );
 
 		register_taxonomy( self::SLUG, Post_Type::SLUG, $args );
-
 	}
-
 }

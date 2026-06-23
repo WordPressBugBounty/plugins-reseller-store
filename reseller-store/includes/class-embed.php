@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +34,6 @@ final class Embed {
 		add_action( 'embed_head', array( $this, 'head' ) );
 
 		add_filter( 'the_excerpt_embed', array( $this, 'excerpt' ) );
-
 	}
 
 	/**
@@ -54,13 +55,13 @@ final class Embed {
 	 *
 	 * @return int|false Returns the number of posts updated, `false` on error.
 	 */
-	public static function search_replace_post_content( $search, $replace ) {
+	public static function search_replace_post_content( string $search, string $replace ): int|false {
 
 		global $wpdb;
 
 		$results = $wpdb->query(
 			$wpdb->prepare(
-				"UPDATE `{$wpdb->posts}` SET `post_content` = REPLACE( `post_content`, %s, %s ) WHERE `post_type` != 'revision' AND `post_status` != 'auto-draft' AND `post_content` LIKE %s AND `post_content` NOT RLIKE '(a:[0-9]+:{)|(s:[0-9]+:)|(i:[0-9]+;)|(O:[0-9]+:\")';",
+				"UPDATE `{$wpdb->posts}` SET `post_content` = REPLACE( `post_content`, %s, %s ) WHERE `post_type` != 'revision' AND `post_status` != 'auto-draft' AND `post_content` LIKE %s AND `post_content` NOT RLIKE '(a:[0-9]+:[{])|(s:[0-9]+:)|(i:[0-9]+;)|(O:[0-9]+:\")';",
 				$search,
 				$replace,
 				'%' . $search . '%'
@@ -68,7 +69,6 @@ final class Embed {
 		);
 
 		return is_int( $results ) ? $results : false;
-
 	}
 
 	/**
@@ -82,7 +82,7 @@ final class Embed {
 	 *
 	 * @return int|false Returns the number of cache entries deleted, `false` on error.
 	 */
-	public static function flush_cache() {
+	public static function flush_cache(): int|false {
 
 		global $wpdb;
 
@@ -90,7 +90,6 @@ final class Embed {
 
 		// Every cache row has an expiration row, divide by two.
 		return is_int( $results ) ? $results / 2 : $results;
-
 	}
 
 	/**
@@ -100,7 +99,7 @@ final class Embed {
 	 * @global WP_Post $post
 	 * @since  0.2.0
 	 */
-	public function head() {
+	public function head(): void {
 
 		global $post;
 
@@ -149,7 +148,6 @@ final class Embed {
 		</style>
 		<base target="_parent">
 		<?php
-
 	}
 
 	/**
@@ -163,7 +161,7 @@ final class Embed {
 	 *
 	 * @return string
 	 */
-	public function excerpt( $excerpt ) {
+	public function excerpt( string $excerpt ): string {
 
 		global $post, $wp_current_filter;
 
@@ -183,7 +181,5 @@ final class Embed {
 		}
 
 		return $output;
-
 	}
-
 }

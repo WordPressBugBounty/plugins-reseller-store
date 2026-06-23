@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store;
 
 use WP_Error;
@@ -49,7 +51,7 @@ final class Setup {
 	 *
 	 * @var string
 	 */
-	private $rcc_site = 'https://reseller.godaddy.com';
+	private string $rcc_site = 'https://reseller.godaddy.com';
 
 
 	/**
@@ -71,7 +73,6 @@ final class Setup {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'page' ), PHP_INT_MAX - 1997 );
 		add_action( 'wp_ajax_rstore_install', array( __CLASS__, 'install' ) );
-
 	}
 
 	/**
@@ -79,7 +80,7 @@ final class Setup {
 	 *
 	 * @return string
 	 */
-	public static function install_nonce() {
+	public static function install_nonce(): string {
 		return rstore_prefix( 'install-' . get_current_user_id() );
 	}
 
@@ -89,7 +90,7 @@ final class Setup {
 	 * @action admin_enqueue_scripts
 	 * @since  0.2.0
 	 */
-	public function admin_enqueue_scripts() {
+	public function admin_enqueue_scripts(): void {
 
 		if ( ! rstore_is_admin_uri( 'admin.php?page=' . self::SLUG ) ) {
 
@@ -135,7 +136,7 @@ final class Setup {
 	 * @global array $menu
 	 * @since  0.2.0
 	 */
-	public function page() {
+	public function page(): void {
 
 		add_submenu_page(
 			self::PAGE_SLUG,
@@ -154,7 +155,7 @@ final class Setup {
 	 * @see   $this->page()
 	 * @since 0.2.0
 	 */
-	public function content() {
+	public function content(): void {
 		?>
 		<style type="text/css">
 		.rstore-setup .notice {
@@ -250,7 +251,7 @@ final class Setup {
 	 *
 	 * @since 0.2.0
 	 */
-	public function missing_script_notice() {
+	public function missing_script_notice(): void {
 
 		if ( wp_script_is( 'rstore-admin-setup', 'enqueued' ) ) {
 
@@ -276,11 +277,11 @@ final class Setup {
 	 * @global wpdb $wpdb
 	 * @since  0.2.0
 	 *
-	 * @param  int $pl_id (optional)
+	 * @param  mixed $pl_id (optional) Private Label ID.
 	 *
 	 * @return true|\WP_Error|void
 	 */
-	public static function install( $pl_id = 0 ) {
+	public static function install( $pl_id = 0 ): ?\WP_Error {
 
 		if (
 			! current_user_can( 'manage_options' )
@@ -324,6 +325,8 @@ final class Setup {
 		rstore_update_option( 'pl_id', $pl_id );
 
 		self::import();
+
+		return null;
 	}
 
 	/**
@@ -335,7 +338,7 @@ final class Setup {
 	 *
 	 * @return true|\WP_Error|void
 	 */
-	public static function import( ) {
+	public static function import(): ?\WP_Error {
 
 		if (
 			! current_user_can( 'publish_posts' )
@@ -419,6 +422,8 @@ final class Setup {
 			);
 
 		}
+
+		return null;
 	}
 
 	/**
@@ -430,7 +435,7 @@ final class Setup {
 	 *
 	 * @return \WP_Error|void  Returns a `WP_Error`, or prints an error as JSON and dies when called during an AJAX request.
 	 */
-	private static function install_error( $code = '', $message = '', $data = '' ) {
+	private static function install_error( string|\WP_Error $code = '', string $message = '', string $data = '' ): ?\WP_Error {
 
 		$wp_error = is_wp_error( $code ) ? $code : false;
 
@@ -453,6 +458,7 @@ final class Setup {
 			)
 		);
 
+		return null;
 	}
 
 	/**
@@ -464,7 +470,7 @@ final class Setup {
 	 *
 	 * @param bool $keep_attachments (optional)
 	 */
-	public static function uninstall( $keep_attachments = true ) {
+	public static function uninstall( bool $keep_attachments = true ): void {
 
 		global $wpdb;
 
@@ -535,7 +541,6 @@ final class Setup {
 				'%' . rstore_prefix( '%' ) // Transients too.
 			)
 		);
-
 	}
 
 	/**
@@ -545,13 +550,11 @@ final class Setup {
 	 * @see   register_deactivation_hook()
 	 * @since 0.2.0
 	 */
-	public static function deactivate() {
+	public static function deactivate(): void {
 
 		delete_option( rstore_prefix( 'pl_id' ) );
 		delete_option( rstore_prefix( 'errors' ) );
 
 		flush_rewrite_rules();
-
 	}
-
 }

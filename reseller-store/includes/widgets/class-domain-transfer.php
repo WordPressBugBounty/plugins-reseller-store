@@ -11,6 +11,8 @@
  * @since    1.6.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store\Widgets;
 
 use Reseller_Store\Shortcodes;
@@ -40,7 +42,6 @@ final class Domain_Transfer extends Widget_Base {
 				'group'       => __( 'Reseller Store Modules', 'reseller-store' ),
 			)
 		);
-
 	}
 
 	/**
@@ -53,7 +54,9 @@ final class Domain_Transfer extends Widget_Base {
 	 *
 	 * @return mixed Returns the HTML markup for the domain transfer container.
 	 */
-	public function widget( $args, $instance ) {
+	public function widget( $args, $instance ): mixed {
+
+		$instance = (array) $instance;
 
 		/**
 		 * Filter classes to be appended to the Domain Transfer widget.
@@ -97,18 +100,18 @@ final class Domain_Transfer extends Widget_Base {
 		}
 
 		$target = '';
-		if ( ! empty($data['new_tab'])) {
+		if ( ! empty( $data['new_tab'] ) ) {
 			$target = ' target="_blank"';
 		}
-		
+
 		?>
-		<form role="search" method="get" class="search-form" action="<?php echo esc_url_raw( rstore()->api->url( 'www', 'products/domain-transfer' ), 'https' ); ?>"<?php echo $target ?>>
+		<form role="search" method="get" class="search-form rstore-domain-form" action="<?php echo esc_url_raw( rstore()->api->url( 'www', 'products/domain-transfer' ), 'https' ); ?>"<?php echo $target; ?>>
 			<label>
 				<input type="search" class="search-field" placeholder="<?php echo esc_attr( $data['text_placeholder'] ); ?>" name="domainToCheck" required>
 			</label>
 			<input type="hidden" class="hidden" value="<?php echo esc_attr( rstore_get_option( 'pl_id' ) ); ?>" name="plid">
 			<input type="hidden" class="hidden" value="slp_rstore" name="itc">
-			<input type="submit" class="search-submit" value="<?php echo esc_attr( $data['text_search'] ); ?>">
+			<button type="submit" class="search-submit button btn btn-primary"><?php echo esc_html( $data['text_search'] ); ?></button>
 		</form>
 		<?php
 
@@ -126,7 +129,6 @@ final class Domain_Transfer extends Widget_Base {
 		}
 
 		return $domain_transfer_widget;
-
 	}
 
 	/**
@@ -136,7 +138,7 @@ final class Domain_Transfer extends Widget_Base {
 	 *
 	 * @param array $instance Widget instance.
 	 */
-	public function form( $instance ) {
+	public function form( $instance ): void {
 		$data = $this->get_data( $instance );
 		$this->display_form_input( 'title', $data['title'], __( 'Title', 'reseller-store' ) );
 		$this->display_form_input( 'text_placeholder', $data['text_placeholder'], __( 'Placeholder', 'reseller-store' ) );
@@ -153,7 +155,7 @@ final class Domain_Transfer extends Widget_Base {
 	 *
 	 * @return array
 	 */
-	public function update( $new_instance, $old_instance ) {
+	public function update( $new_instance, $old_instance ): array {
 
 		$instance['title']            = isset( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : null;
 		$instance['text_placeholder'] = isset( $new_instance['text_placeholder'] ) ? wp_kses_post( $new_instance['text_placeholder'] ) : null;
@@ -161,7 +163,6 @@ final class Domain_Transfer extends Widget_Base {
 		$instance['new_tab']          = isset( $new_instance['new_tab'] ) ? (bool) $new_instance['new_tab'] : false;
 
 		return $instance;
-
 	}
 
 	/**
@@ -173,7 +174,7 @@ final class Domain_Transfer extends Widget_Base {
 	 *
 	 * @return array
 	 */
-	private function get_data( $instance ) {
+	private function get_data( array $instance ): array {
 		return array(
 			'title'            => isset( $instance['title'] ) ? $instance['title'] : apply_filters( 'rstore_domain_transfer_title', '' ),
 			'text_placeholder' => isset( $instance['text_placeholder'] ) ? $instance['text_placeholder'] : apply_filters( 'rstore_domain_transfer_text_placeholder', esc_html__( 'Enter domain to transfer', 'reseller-store' ) ),
@@ -181,5 +182,4 @@ final class Domain_Transfer extends Widget_Base {
 			'new_tab'          => isset( $instance['new_tab'] ) ? $instance['new_tab'] : false,
 		);
 	}
-
 }

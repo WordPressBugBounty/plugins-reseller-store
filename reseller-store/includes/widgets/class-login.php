@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store\Widgets;
 
 use Reseller_Store\Shortcodes;
@@ -40,7 +42,6 @@ final class Login extends Widget_Base {
 				'category'    => __( 'Reseller Store Modules', 'reseller-store' ),
 			)
 		);
-
 	}
 
 	/**
@@ -53,7 +54,9 @@ final class Login extends Widget_Base {
 	 *
 	 * @return mixed Returns the HTML markup for the login container.
 	 */
-	public function widget( $args, $instance ) {
+	public function widget( $args, $instance ): mixed {
+
+		$instance = (array) $instance;
 
 		/**
 		 * Filter classes to be appended to the Domain Search widget.
@@ -126,7 +129,6 @@ final class Login extends Widget_Base {
 		}
 
 		return $login_widget;
-
 	}
 
 	/**
@@ -136,14 +138,13 @@ final class Login extends Widget_Base {
 	 *
 	 * @param array $instance Widget instance.
 	 */
-	public function form( $instance ) {
+	public function form( $instance ): void {
 
 		$data = $this->get_data( $instance );
 		$this->display_form_input( 'title', $data['title'], __( 'Title', 'reseller-store' ) );
 		$this->display_form_input( 'login_button_text', $data['login_button_text'], __( 'Sign In Button', 'reseller-store' ) );
 		$this->display_form_input( 'welcome_message', $data['welcome_message'], __( 'Welcome Message', 'reseller-store' ) );
 		$this->display_form_input( 'logout_button_text', $data['logout_button_text'], __( 'Log Out Button', 'reseller-store' ) );
-
 	}
 
 	/**
@@ -156,7 +157,7 @@ final class Login extends Widget_Base {
 	 *
 	 * @return array
 	 */
-	public function update( $new_instance, $old_instance ) {
+	public function update( $new_instance, $old_instance ): array {
 
 		$instance['title']              = isset( $new_instance['title'] ) ? sanitize_text_field( $new_instance['title'] ) : null;
 		$instance['welcome_message']    = isset( $new_instance['welcome_message'] ) ? wp_kses_post( $new_instance['welcome_message'] ) : null;
@@ -164,7 +165,6 @@ final class Login extends Widget_Base {
 		$instance['logout_button_text'] = isset( $new_instance['logout_button_text'] ) ? wp_kses_post( $new_instance['logout_button_text'] ) : null;
 
 		return $instance;
-
 	}
 
 	/**
@@ -176,7 +176,7 @@ final class Login extends Widget_Base {
 	 *
 	 * @return array
 	 */
-	private function get_data( $instance ) {
+	private function get_data( array $instance ): array {
 		return array(
 			'title'              => isset( $instance['title'] ) ? $instance['title'] : apply_filters( 'rstore_login_title', '' ),
 			'welcome_message'    => isset( $instance['welcome_message'] ) ? $instance['welcome_message'] : apply_filters( 'rstore_login_welcome_message', esc_html__( 'Welcome Back', 'reseller-store' ) ),
@@ -184,5 +184,4 @@ final class Login extends Widget_Base {
 			'logout_button_text' => isset( $instance['logout_button_text'] ) ? $instance['logout_button_text'] : apply_filters( 'rstore_logout_button_text', esc_html__( 'Log Out', 'reseller-store' ) ),
 		);
 	}
-
 }

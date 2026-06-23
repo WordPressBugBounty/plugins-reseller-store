@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +39,6 @@ final class Permalinks {
 
 		add_action( 'admin_init', array( $this, 'init' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-
 	}
 
 	/**
@@ -46,7 +47,7 @@ final class Permalinks {
 	 * @action current_screen
 	 * @since  0.2.0
 	 */
-	public function init() {
+	public function init(): void {
 
 		add_settings_field(
 			'rstore_category_base',
@@ -58,7 +59,6 @@ final class Permalinks {
 					( Taxonomy_Category::permalink_base() !== Taxonomy_Category::$default_permalink_base ) ? esc_attr( Taxonomy_Category::permalink_base() ) : '',
 					esc_attr( Taxonomy_Category::$default_permalink_base )
 				);
-
 			},
 			'permalink',
 			'optional'
@@ -74,7 +74,6 @@ final class Permalinks {
 					( Taxonomy_Tag::permalink_base() !== Taxonomy_Tag::$default_permalink_base ) ? esc_attr( Taxonomy_Tag::permalink_base() ) : '',
 					esc_attr( Taxonomy_Tag::$default_permalink_base )
 				);
-
 			},
 			'permalink',
 			'optional'
@@ -88,7 +87,6 @@ final class Permalinks {
 		);
 
 		$this->save();
-
 	}
 
 	/**
@@ -96,7 +94,7 @@ final class Permalinks {
 	 *
 	 * @since 0.2.0
 	 */
-	public function section() {
+	public function section(): void {
 
 		printf(
 			'<p>%s</p>',
@@ -154,7 +152,6 @@ final class Permalinks {
 			</tbody>
 		</table>
 		<?php
-
 	}
 
 	/**
@@ -162,7 +159,7 @@ final class Permalinks {
 	 *
 	 * @since 0.2.0
 	 */
-	private function save() {
+	private function save(): void {
 
 		if (
 			false === wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS ), 'update-permalink' )
@@ -211,7 +208,6 @@ final class Permalinks {
 		}
 
 		rstore_update_option( 'permalinks', $new_permalinks );
-
 	}
 
 	/**
@@ -220,7 +216,7 @@ final class Permalinks {
 	 * @action admin_enqueue_scripts
 	 * @since  0.2.0
 	 */
-	public function admin_enqueue_scripts() {
+	public function admin_enqueue_scripts(): void {
 
 		if ( ! rstore_is_admin_uri( 'options-permalink.php' ) ) {
 
@@ -231,7 +227,5 @@ final class Permalinks {
 		$suffix = SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script( 'rstore-admin-permalinks', Plugin::assets_url( "js/admin-permalinks{$suffix}.js" ), array( 'jquery' ), rstore()->version, true );
-
 	}
-
 }

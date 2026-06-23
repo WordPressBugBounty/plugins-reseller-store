@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store\Widgets;
 
 use Reseller_Store\Product_Icons;
@@ -40,7 +42,6 @@ final class Product extends Widget_Base {
 				'category'    => __( 'Reseller Store Modules', 'reseller-store' ),
 			)
 		);
-
 	}
 
 	/**
@@ -48,14 +49,16 @@ final class Product extends Widget_Base {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array  $args     Widget arguments array.
-	 * @param object $instance Instance object.
+	 * @param array $args     Widget arguments array.
+	 * @param array $instance Widget instance settings.
 	 *
 	 * @return mixed           Markup for the single product widget.
 	 */
-	public function widget( $args, $instance ) {
+	public function widget( $args, $instance ): mixed {
 
 		global $wp_current_filter, $post;
+
+		$instance = (array) $instance;
 
 		$data = $this->get_data( $instance );
 
@@ -195,7 +198,6 @@ final class Product extends Widget_Base {
 		}
 
 		return $content;
-
 	}
 
 	/**
@@ -205,7 +207,7 @@ final class Product extends Widget_Base {
 	 *
 	 * @param array $instance Widget instance.
 	 */
-	public function form( $instance ) {
+	public function form( $instance ): void {
 
 		$data = $this->get_data( $instance );
 
@@ -264,7 +266,7 @@ final class Product extends Widget_Base {
 	 *
 	 * @return array              Final array of widget options.
 	 */
-	public function update( $new_instance, $old_instance ) {
+	public function update( $new_instance, $old_instance ): array {
 
 		$instance['post_id']        = isset( $new_instance['post_id'] ) ? absint( $new_instance['post_id'] ) : null;
 		$instance['show_title']     = isset( $new_instance['show_title'] ) ? (bool) absint( $new_instance['show_title'] ) : false;
@@ -280,7 +282,6 @@ final class Product extends Widget_Base {
 		$instance['layout_type']    = isset( $new_instance['layout_type'] ) ? sanitize_text_field( $new_instance['layout_type'] ) : null;
 
 		return $instance;
-
 	}
 
 	/**
@@ -292,7 +293,7 @@ final class Product extends Widget_Base {
 	 *
 	 * @return mixed Markup for the product select options.
 	 */
-	private static function get_products( $selected_product ) {
+	private static function get_products( int $selected_product ): void {
 
 		$query = new \WP_Query(
 			array(
@@ -326,7 +327,6 @@ final class Product extends Widget_Base {
 		}
 
 		wp_reset_postdata();
-
 	}
 
 	/**
@@ -338,7 +338,7 @@ final class Product extends Widget_Base {
 	 *
 	 * @return array
 	 */
-	private function get_data( $instance ) {
+	private function get_data( array $instance ): array {
 
 		return array(
 			'post_id'        => (int) isset( $instance['post_id'] ) ? $instance['post_id'] : -1,

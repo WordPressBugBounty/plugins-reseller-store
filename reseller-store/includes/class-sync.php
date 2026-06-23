@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store;
 
 use WP_Error;
@@ -30,7 +32,7 @@ final class Sync {
 	 *
 	 * @var int
 	 */
-	private $ttl = 14400; // 4 hours
+	private int $ttl = 14400; // 4 hours
 
 	/**
 	 * The time to wait in between API sync retries (in seconds).
@@ -39,7 +41,7 @@ final class Sync {
 	 *
 	 * @var int
 	 */
-	private $retry_ttl = 120;
+	private int $retry_ttl = 120;
 
 	/**
 	 * Array of product properties that should be synced.
@@ -48,7 +50,7 @@ final class Sync {
 	 *
 	 * @var array
 	 */
-	private $properties = array( 'content', 'listPrice', 'salePrice', 'term', 'title' );
+	private array $properties = array( 'content', 'listPrice', 'salePrice', 'term', 'title' );
 
 	/**
 	 * Class constructor.
@@ -101,7 +103,6 @@ final class Sync {
 
 		// After the post type and taxonomies are registered.
 		add_action( 'init', array( $this, 'check' ), 11 );
-
 	}
 
 	/**
@@ -110,7 +111,7 @@ final class Sync {
 	 * @action init
 	 * @since  0.2.0
 	 */
-	public function check() {
+	public function check(): void {
 
 		if ( time() < (int) rstore_get_option( 'next_sync' ) ) {
 
@@ -130,7 +131,6 @@ final class Sync {
 			rstore_update_option( 'next_sync', time() + $this->ttl );
 
 		}
-
 	}
 
 	/**
@@ -140,7 +140,7 @@ final class Sync {
 	 *
 	 * @return bool
 	 */
-	private function sync_product_meta() {
+	private function sync_product_meta(): bool {
 
 		$products = rstore_get_products( true );
 
@@ -178,7 +178,5 @@ final class Sync {
 		}
 
 		return true;
-
 	}
-
 }

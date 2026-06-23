@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store;
 
 use WP_Error;
@@ -30,7 +32,7 @@ final class API {
 	 *
 	 * @var string
 	 */
-	private $tld = 'secureserver.net';
+	private string $tld = 'secureserver.net';
 
 	/**
 	 * Maximum number of retries for API requests.
@@ -39,7 +41,7 @@ final class API {
 	 *
 	 * @var int
 	 */
-	private $max_retries = 0;
+	private int $max_retries = 0;
 
 	/**
 	 * Array of URLs.
@@ -48,7 +50,7 @@ final class API {
 	 *
 	 * @var array
 	 */
-	private $urls = array();
+	private array $urls = array();
 
 	/**
 	 * Class constructor.
@@ -67,7 +69,7 @@ final class API {
 		$this->tld = (string) apply_filters( 'rstore_api_tld', $this->tld );
 
 		/**
-		 *
+		 * Filter the maximum number of retries for API requests.
 		 *
 		 * @since 0.2.0
 		 *
@@ -82,7 +84,6 @@ final class API {
 		$this->urls['sso']      = sprintf( 'https://sso.%s/', $this->tld );
 		$this->urls['account']  = sprintf( 'https://account.%s/', $this->tld );
 		$this->urls['gui']      = sprintf( 'https://gui.%s/pcjson/standardheaderfooter', $this->tld );
-
 	}
 
 	/**
@@ -96,7 +97,7 @@ final class API {
 	 *
 	 * @return string
 	 */
-	public function add_query_args( $url, $args = array(), $url_key = '' ) {
+	public function add_query_args( string $url, array $args = array(), string $url_key = '' ): string {
 
 		if ( rstore_is_setup() ) {
 
@@ -106,8 +107,7 @@ final class API {
 
 		$args = (array) apply_filters( 'rstore_api_query_args', $args, $url_key );
 
-		return  esc_url_raw( add_query_arg( $args, $url ) );
-
+		return esc_url_raw( add_query_arg( $args, $url ) );
 	}
 
 	/**
@@ -121,7 +121,7 @@ final class API {
 	 *
 	 * @return string
 	 */
-	public function url( $url_key, $endpoint = '', $args = array() ) {
+	public function url( string $url_key, string $endpoint = '', array $args = array() ): string {
 
 		if ( ! array_key_exists( $url_key, $this->urls ) ) {
 			return $this->url( 'www', $endpoint );
@@ -145,10 +145,9 @@ final class API {
 
 		}
 
-		$url = str_replace( '{pl_id}', (int) rstore_get_option( 'pl_id' ), $url );
+		$url = str_replace( '{pl_id}', (string) absint( rstore_get_option( 'pl_id' ) ), $url );
 
 		return $this->add_query_args( trailingslashit( $url ), $args, $url_key );
-
 	}
 
 	/**
@@ -162,7 +161,7 @@ final class API {
 	 *
 	 * @return array|WP_Error
 	 */
-	private function request( $method, $endpoint, $args = array() ) {
+	private function request( string $method, string $endpoint, array $args = array() ): mixed {
 
 		$defaults = array(
 			'method'    => $method,
@@ -195,7 +194,7 @@ final class API {
 
 		static $errors = 0;
 
-		$errors++;
+		++$errors;
 
 		if ( $errors <= $this->max_retries ) {
 
@@ -212,7 +211,6 @@ final class API {
 		$message = ( $message ) ? $message : esc_html__( 'An unknown error has occurred.', 'reseller-store' );
 
 		return new WP_Error( $code, $message );
-
 	}
 
 	/**
@@ -223,9 +221,9 @@ final class API {
 	 * @param  string $endpoint API endpoint to retrieve data from.
 	 * @param  array  $args     (optional) Additional query arguments.
 	 *
-	 * @return array|WP_Error
+	 * @return mixed
 	 */
-	public function get( $endpoint, $args = array() ) {
+	public function get( string $endpoint, array $args = array() ): mixed {
 
 		$key = rstore_prefix( 'api_get-' . md5( $endpoint . maybe_serialize( $args ) ) );
 
@@ -240,7 +238,6 @@ final class API {
 		}
 
 		return $results;
-
 	}
 
 	/**
@@ -251,12 +248,11 @@ final class API {
 	 * @param  string $endpoint API endpoint.
 	 * @param  array  $args     Additional query arguments.
 	 *
-	 * @return array|WP_Error
+	 * @return mixed
 	 */
-	public function post( $endpoint, $args = array() ) {
+	public function post( string $endpoint, array $args = array() ): mixed {
 
 		return $this->request( 'POST', $endpoint, $args );
-
 	}
 
 	/**
@@ -267,12 +263,10 @@ final class API {
 	 * @param  string $endpoint API endpoint.
 	 * @param  array  $args     Additional query arguments.
 	 *
-	 * @return array|WP_Error
+	 * @return mixed
 	 */
-	public function delete( $endpoint, $args = array() ) {
+	public function delete( string $endpoint, array $args = array() ): mixed {
 
 		return $this->request( 'DELETE', $endpoint, $args );
-
 	}
-
 }

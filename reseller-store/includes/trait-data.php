@@ -11,6 +11,8 @@
  * @since    1.0.0
  */
 
+declare(strict_types=1);
+
 namespace Reseller_Store;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,7 +30,7 @@ trait Data {
 	 *
 	 * @var object|bool
 	 */
-	protected $data = false;
+	protected mixed $data = false;
 
 	/**
 	 * Magic data getter.
@@ -39,7 +41,7 @@ trait Data {
 	 *
 	 * @return mixed
 	 */
-	public function __get( $key ) {
+	public function __get( string $key ): mixed {
 
 		if ( 'data' === $key ) {
 
@@ -48,7 +50,6 @@ trait Data {
 		}
 
 		return isset( $this->data->{$key} ) ? $this->data->{$key} : false;
-
 	}
 
 	/**
@@ -61,16 +62,14 @@ trait Data {
 	 *
 	 * @return mixed
 	 */
-	public function __set( $key, $value ) {
+	public function __set( string $key, mixed $value ): void {
 
 		if ( ! $this->data ) {
 
-			$this->data = new \stdClass;
+			$this->data = new \stdClass();
 
 		}
 
 		$this->data->{$key} = $value;
-
 	}
-
 }
